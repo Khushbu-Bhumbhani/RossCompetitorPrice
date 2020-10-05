@@ -130,7 +130,7 @@ public class ScrewfixDetailScrape {
             MyConnection.getConnection("ross");
             if (MyConnection.insertData(insertQ)) {
                 String updateQ = "update ross.screwfix_link_master set is_scraped=1 where link_id=" + id;
-              //  MyConnection.insertData(updateQ);
+                MyConnection.insertData(updateQ);
                 System.out.println("INserted!");
             }
             // }
