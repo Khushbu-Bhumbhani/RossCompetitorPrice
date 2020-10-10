@@ -34,15 +34,15 @@ public class OakWoodDoors {
             "https://www.oakwooddoors.co.uk/internal-door-white-primed-mexicano-special-offer#prodTop"
         // "https://www.oakwooddoors.co.uk/internal-door-walnut-alcaraz-prefinished-special-offer#prodTop"
         };
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Khushbu\\Downloads\\chromedriver_win32(2)\\chromedriver.exe");
+    //    System.setProperty("webdriver.chrome.driver", "C:\\Users\\Khushbu\\Downloads\\chromedriver_win32(2)\\chromedriver.exe");
 
         //String url = "https://www.wholesaledeals.co.uk/";
-        ChromeOptions options = new ChromeOptions();
+        //ChromeOptions options = new ChromeOptions();
         // options.addArguments("--headless");
-        ChromeDriver driver = new ChromeDriver(options);
+      //  ChromeDriver driver = new ChromeDriver(options);
         for (String s : url) {
-            // detailScrape(s);
-            detailScrapeWithSelenium(s, driver);
+             detailScrape(s);
+          //  detailScrapeWithSelenium(s, driver);
         }
     }
 
@@ -72,7 +72,7 @@ public class OakWoodDoors {
         }
     }
 
-    private static void detailScrapeWithSelenium(String url, ChromeDriver driver) {
+    /*private static void detailScrapeWithSelenium(String url, ChromeDriver driver) {
 
         String title = "";
         String price = "";
@@ -130,7 +130,7 @@ public class OakWoodDoors {
             System.out.println("no options - select found no");
         }
         System.out.println("" + title + ";" + price + ";" + material + ";" + desc + ";" + delivery);
-    }
+    }*/
     
      public static boolean waitForJSandJQueryToLoad(ChromeDriver driver) {
 
