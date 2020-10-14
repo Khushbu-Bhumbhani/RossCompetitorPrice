@@ -36,7 +36,7 @@ public class WayfairDetailScraping {
         String selectQ = "select link_id, link from ross.wayfair_link_master where is_scraped=0 limit 0,5";
         MyConnection.getConnection("ross");
         ResultSet rs = MyConnection.getResultSet(selectQ);
-          System.setProperty("webdriver.chrome.driver", "C:\\Users\\Khushbu\\Downloads\\chromedriver_win32(2)\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Khushbu\\Downloads\\chromedriver_win32(2)\\chromedriver.exe");
 
         //String url = "https://www.wholesaledeals.co.uk/";
         ChromeOptions options = new ChromeOptions();
@@ -46,8 +46,10 @@ public class WayfairDetailScraping {
             while (rs.next()) {
                 String url = rs.getString("link");
                 int id = rs.getInt("link_id");
-                scrapeDetails(url, id,driver);
-                Thread.sleep(5000);
+                scrapeDetails(url, id, driver);
+                System.out.println("sleeping...");
+                Thread.sleep(60 * 1000);
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(HomeBaseDetailScraping.class.getName()).log(Level.SEVERE, null, ex);
@@ -59,26 +61,25 @@ public class WayfairDetailScraping {
     private static void scrapeDetails(String url, int id, ChromeDriver driver) {
         driver.get(url);
         OakWoodDoors.waitForJSandJQueryToLoad(driver);
-                   System.out.println("" + url);
-            Document doc = Jsoup.parse(driver.getPageSource());
-                   
-            String title = "";
-            String price = "";
-            String woodType = "";
-            String size = "";
-            String desc = "";
-            String details = "";
-            String brand = "";
-            String delivery="";
-            // String availableColors = "";
-            title = doc.getElementsByAttributeValue("property", "og:title").first().attr("content");
-          //  System.out.println(""+doc.html());
-            price = doc.getElementsByClass("StandardPriceBlock").first().text();
-            delivery = doc.getElementsByClass("ShippingHeadline").first().text();
-            
-            //   price = price.replace("from", "").trim();
-            
-           /* if (doc.getElementById("product-attribute-specs-table") != null) {
+        System.out.println("" + url);
+        Document doc = Jsoup.parse(driver.getPageSource());
+
+        String title = "";
+        String price = "";
+        String woodType = "";
+        String size = "";
+        String desc = "";
+        String details = "";
+        String brand = "";
+        String delivery = "";
+        // String availableColors = "";
+        title = doc.getElementsByAttributeValue("property", "og:title").first().attr("content");
+        //  System.out.println(""+doc.html());
+        price = doc.getElementsByClass("StandardPriceBlock").first().text();
+        delivery = doc.getElementsByClass("ShippingHeadline").first().text();
+
+        //   price = price.replace("from", "").trim();
+        /* if (doc.getElementById("product-attribute-specs-table") != null) {
                 details = doc.getElementById("product-attribute-specs-table").html();
             }
             if (details != null) {
@@ -89,60 +90,59 @@ public class WayfairDetailScraping {
                     details = details.substring(0, details.length() - 1);
                 }
             }*/
-            desc = StringUtils.substringBetween(doc.html(), "\"description\":\"", "\"");
-            desc = Utility.html2text(desc);
-            brand = StringUtils.substringBetween(doc.html(), "\"brand\":\"", "\"");
-            brand = Utility.html2text(brand);
+        desc = StringUtils.substringBetween(doc.html(), "\"description\":\"", "\"");
+        desc = Utility.html2text(desc);
+        brand = StringUtils.substringBetween(doc.html(), "\"brand\":\"", "\"");
+        brand = Utility.html2text(brand);
 
-            //"label":"Size mm","options":
-            String varient[] = StringUtils.substringsBetween(doc.html(), "\"Door Size\",\"name\":\"", "\"");
-            //  System.out.println(""+varient);
-            if (varient != null ) {
-                //    price = "£" + StringUtils.substringBetween(varient, "\"basePrice\":\"", "\"");
-                for (String s : varient) {
-                    if (size.equals("")) {
-                        size = s;
-                    } else {
-                        size = size + " | " + s;
-                    }
+        //"label":"Size mm","options":
+        String varient[] = StringUtils.substringsBetween(doc.html(), "\"Door Size\",\"name\":\"", "\"");
+        //  System.out.println(""+varient);
+        if (varient != null) {
+            //    price = "£" + StringUtils.substringBetween(varient, "\"basePrice\":\"", "\"");
+            for (String s : varient) {
+                if (size.equals("")) {
+                    size = s;
+                } else {
+                    size = size + " | " + s;
                 }
-            } 
-            System.out.println("------");
-            //     System.out.println("" + title + ";" + size + ";" + price + ";" + desc + ";" + details);
-            String insertQ = "INSERT INTO `ross`.`wayfair_detail_master`\n"
-                    + "(\n"
-                    + "`title`,\n"
-                    + "`price`,\n"
-                    + "`size`,\n"
-                    + "`delivery`,\n"
-                    + "`brand`,\n"
-                    + "`desc`,\n"
-                    + "`link_id`)\n"
-                    + "VALUES\n"
-                    + "("
-                    + "'" + Utility.prepareString(title) + "',"
-                    + "'" + Utility.prepareString(price) + "',"
-                    + "'" + Utility.prepareString(size) + "',"
-                    + "'" + Utility.prepareString(delivery) + "',"
-                    + "'" + Utility.prepareString(brand) + "',"
-                    + "'" + Utility.prepareString(desc) + "',"
-                    + id
-                    + ")";
-            MyConnection.getConnection("ross");
-            if (MyConnection.insertData(insertQ)) {
-                String updateQ = "update ross.wayfair_link_master set is_scraped=1 where link_id=" + id;
-               // MyConnection.insertData(updateQ);
-                System.out.println("INserted!");
             }
+        }
+        System.out.println("------");
+        //     System.out.println("" + title + ";" + size + ";" + price + ";" + desc + ";" + details);
+        String insertQ = "INSERT INTO `ross`.`wayfair_detail_master`\n"
+                + "(\n"
+                + "`title`,\n"
+                + "`price`,\n"
+                + "`size`,\n"
+                + "`delivery`,\n"
+                + "`brand`,\n"
+                + "`desc`,\n"
+                + "`link_id`)\n"
+                + "VALUES\n"
+                + "("
+                + "'" + Utility.prepareString(title) + "',"
+                + "'" + Utility.prepareString(price) + "',"
+                + "'" + Utility.prepareString(size) + "',"
+                + "'" + Utility.prepareString(delivery) + "',"
+                + "'" + Utility.prepareString(brand) + "',"
+                + "'" + Utility.prepareString(desc) + "',"
+                + id
+                + ")";
+        MyConnection.getConnection("ross");
+        if (MyConnection.insertData(insertQ)) {
+            String updateQ = "update ross.wayfair_link_master set is_scraped=1 where link_id=" + id;
+            MyConnection.insertData(updateQ);
+            System.out.println("INserted!");
+        }
 
 
-            /*if (!doc.getElementsByAttributeValue("data-heading", "material").isEmpty()) {
+        /*if (!doc.getElementsByAttributeValue("data-heading", "material").isEmpty()) {
                 Element em = doc.getElementsByAttributeValue("data-heading", "material").first();
                 TextNode  ae = (TextNode) em.nextSibling();
                
                 material = ae.text();
             }*/
-            // System.out.println(title + ";" + price + ";" + material + ";" + size + ";" + deliveryCharge + ";" + desc);
-       
+        // System.out.println(title + ";" + price + ";" + material + ";" + size + ";" + deliveryCharge + ";" + desc);
     }
 }

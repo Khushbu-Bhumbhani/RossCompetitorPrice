@@ -38,7 +38,7 @@ public class BuildingSuppliesDoorsDetailScrape {
                 String url = rs.getString("link");
                 int id = rs.getInt("link_id");
                 scrapeDetails(url, id);
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             }
         } catch (SQLException ex) {
             Logger.getLogger(HomeBaseDetailScraping.class.getName()).log(Level.SEVERE, null, ex);
@@ -110,7 +110,9 @@ public class BuildingSuppliesDoorsDetailScrape {
 
                 }
             } else {
-                price = doc.getElementsByAttributeValue("itemprop", "price").first().attr("content");
+                if (!doc.getElementsByAttributeValue("itemprop", "price").isEmpty()) {
+                    price = doc.getElementsByAttributeValue("itemprop", "price").first().attr("content");
+                }
                 size = StringUtils.substringBetween(doc.html(), "Full Size: </strong>", "</li>");
                 size = Utility.html2text(size);
                 String insertQ = "INSERT INTO `buildingsuppliesonline_detail_master`\n"
